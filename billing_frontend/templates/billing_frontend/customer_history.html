@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Purchase History</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .search-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 4px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="email"] { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-success { background-color: #28a745; color: white; }
+        .purchases-list { margin: 20px 0; }
+        .purchase-item { padding: 15px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px; cursor: pointer; }
+        .purchase-item:hover { background-color: #f8f9fa; }
+        .purchase-details { margin: 20px 0; padding: 15px; border: 2px solid #007bff; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Customer Purchase History</h1>
+        
+        <div class="search-section">
+            <form method="get">
+                <div class="form-group">
+                    <label for="email">Customer Email:</label>
+                    <input type="email" id="email" name="email" value="{{ email }}" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Search</button>
+                <a href="{% url 'billing_page' %}" class="btn btn-success">New Bill</a>
+            </form>
+        </div>
+        
+        {% if email %}
+        <div class="purchases-list">
+            <h2>Purchases for {{ email }}</h2>
+            {% if purchases %}
+                {% for purchase in purchases %}
+                <div class="purchase-item" onclick="location.href='?email={{ email }}&purchase_id={{ purchase.id }}'">
+                    <p><strong>Date:</strong> {{ purchase.created_at|date:"Y-m-d H:i" }}</p>
+                    <p><strong>Invoice:</strong> {{ purchase.invoice.invoice_number }}</p>
+                    <p><strong>Cash Paid:</strong> {{ purchase.cash_paid }}</p>
+                    <p><strong>Balance Returned:</strong> {{ purchase.balance_returned }}</p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No purchases found for this customer.</p>
+            {% endif %}
+        </div>
+        
+        {% if selected_purchase %}
+        <div class="purchase-details">
+            <h2>Purchase Details - {{ selected_purchase.invoice.invoice_number }}</h2>
+            <p><strong>Date:</strong> {{ selected_purchase.created_at|date:"Y-m-d H:i" }}</p>
+            <p><strong>Cash Paid:</strong> {{ selected_purchase.cash_paid }}</p>
+            <p><strong>Balance Returned:</strong> {{ selected_purchase.balance_returned }}</p>
+            
+            <h3>Items Purchased</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Product Name</th>
+                        <th>Unit Price</th>
+                        <th>Quantity</th>
+                        <th>Tax %</th>
+                        <th>Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in selected_purchase.invoice.items.all %}
+                    <tr>
+                        <td>{{ item.product.sku }}</td>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.unit_price }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.tax_percentage }}%</td>
+                        <td>{{ item.total_price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <div style="margin-top: 15px;">
+                <p><strong>Subtotal:</strong> {{ selected_purchase.invoice.subtotal }}</p>
+                <p><strong>Tax Amount:</strong> {{ selected_purchase.invoice.tax_amount }}</p>
+                <p><strong>Total Amount:</strong> {{ selected_purchase.invoice.total_amount }}</p>
+            </div>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>

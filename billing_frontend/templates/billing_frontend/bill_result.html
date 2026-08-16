@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generated Bill</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { margin-bottom: 20px; }
+        .bill-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; font-weight: bold; }
+        .totals { margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 4px; }
+        .total-row { display: flex; justify-content: space-between; margin: 5px 0; }
+        .total-row span:first-child { font-weight: bold; }
+        .denomination-box { margin-top: 20px; padding: 15px; border: 2px solid #333; border-radius: 4px; }
+        .denomination-item { display: flex; justify-content: space-between; margin: 5px 0; }
+        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-success { background-color: #28a745; color: white; }
+        .button-group { display: flex; gap: 10px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Generated Bill</h1>
+            <p><strong>Invoice Number:</strong> {{ invoice_number }}</p>
+            <p><strong>Customer Email:</strong> {{ customer_email }}</p>
+        </div>
+        
+        <div class="bill-section">
+            <h2>Bill Section</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Unit Price</th>
+                        <th>Quantity</th>
+                        <th>Purchase Price</th>
+                        <th>Tax %</th>
+                        <th>Tax Payable</th>
+                        <th>Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.product_id }}</td>
+                        <td>{{ item.unit_price }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.purchase_price }}</td>
+                        <td>{{ item.tax_percentage }}%</td>
+                        <td>{{ item.tax_payable }}</td>
+                        <td>{{ item.total_price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="totals">
+            <div class="total-row">
+                <span>Total price without tax:</span>
+                <span>{{ subtotal }}</span>
+            </div>
+            <div class="total-row">
+                <span>Total tax payable:</span>
+                <span>{{ total_tax }}</span>
+            </div>
+            <div class="total-row">
+                <span>Net price of the purchased items:</span>
+                <span>{{ net_price }}</span>
+            </div>
+            <div class="total-row">
+                <span>Rounded down value of the purchased items net price:</span>
+                <span>{{ rounded_net_price }}</span>
+            </div>
+            <div class="total-row">
+                <span>Cash paid by customer:</span>
+                <span>{{ cash_paid }}</span>
+            </div>
+            <div class="total-row">
+                <span>Balance payable to the customer:</span>
+                <span>{{ balance }}</span>
+            </div>
+        </div>
+        
+        {% if balance > 0 %}
+        <div class="denomination-box">
+            <h3>Balance Denomination:</h3>
+            {% for value, count in balance_denominations.items %}
+            <div class="denomination-item">
+                <span>{{ value }}:</span>
+                <span>{{ count }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="button-group">
+            <a href="{% url 'billing_page' %}" class="btn btn-primary">New Bill</a>
+            <a href="{% url 'customer_history' %}?email={{ customer_email }}" class="btn btn-success">View Customer History</a>
+        </div>
+    </div>
+</body>
+</html>

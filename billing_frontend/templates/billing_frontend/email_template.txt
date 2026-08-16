@@ -1,0 +1,30 @@
+Invoice {{ invoice.invoice_number }}
+
+Dear Customer,
+
+Thank you for your purchase. Here are the details of your invoice:
+
+Customer Email: {{ customer_email }}
+Invoice Number: {{ invoice.invoice_number }}
+Date: {{ invoice.issue_date }}
+
+Items Purchased:
+{% for item in items %}
+- {{ item.product_id }}: {{ item.name }}
+  Unit Price: {{ item.unit_price }}
+  Quantity: {{ item.quantity }}
+  Purchase Price: {{ item.purchase_price }}
+  Tax %: {{ item.tax_percentage }}%
+  Tax Payable: {{ item.tax_payable }}
+  Total Price: {{ item.total_price }}
+{% endfor %}
+
+Summary:
+Total price without tax: {{ invoice.subtotal }}
+Total tax payable: {{ invoice.tax_amount }}
+Net price of the purchased items: {{ invoice.total_amount }}
+
+Thank you for your business!
+
+Best regards,
+Billing System
