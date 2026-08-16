@@ -178,10 +178,3 @@ python manage.py test
 5. Configure static files serving
 6. Use a production WSGI server (Gunicorn, uWSGI)
 
-## License
-
-This project is created for assessment purposes.
-
-## Support
-
-For issues or questions, please contact the development team.
